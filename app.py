@@ -66,7 +66,7 @@ def detail(entry_id):
 @app.route('/')
 @app.route('/entries')
 def index():
-    entries = models.Entry.select().limit(100)
+    entries = models.Entry.select().limit(100).order_by(models.Entry.created_date.desc())
     return  render_template('index.html', entries=entries)
 
 
