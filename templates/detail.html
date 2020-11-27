@@ -15,7 +15,7 @@
             <div class="container">
                 <div class="site-header">
                     <a class="logo" href="index.html"><i class="material-icons">library_books</i></a>
-                    <a class="button icon-right" href="new.html"><span>New Entry</span> <i class="material-icons">add</i></a>
+                    <a class="button icon-right" href="{{ url_for('new') }}"><span>New Entry</span> <i class="material-icons">add</i></a>
                 </div>
             </div>
         </header>
@@ -23,7 +23,7 @@
             <div class="container">
                 <div class="entry-list single">
                     <article>
-                        <h1>{{ entry.content }}</h1>
+                        <h1>{{ entry.title }}</h1>
                         <time datetime="{{ entry.created_date.strftime('%Y-%m-%d') }}">{{ entry.created_date.strftime('%B %d, %Y') }}</time>
                         <div class="entry">
                             <h3>Time Spent: </h3>

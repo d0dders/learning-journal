@@ -15,7 +15,7 @@
             <div class="container">
                 <div class="site-header">
                     <a class="logo" href="index.html"><i class="material-icons">library_books</i></a>
-                    <a class="button icon-right" href="new.html"><span>New Entry</span> <i class="material-icons">add</i></a>
+                    <a class="button icon-right" href="{{ url_for('new') }}"><span>New Entry</span> <i class="material-icons">add</i></a>
                 </div>
             </div>
         </header>
@@ -23,17 +23,18 @@
             <div class="container">
                 <div class="new-entry">
                     <h2>New Entry</h2>
-                    <form>
-                        <label for="title"> Title</label>
-                        <input id="title" type="text" name="title"><br>
-                        <label for="date">Date</label>
-                        <input id="date" type="date" name="date"><br>
-                        <label for="time-spent"> Time Spent</label>
-                        <input id="time-spent" type="text" name="timeSpent"><br>
-                        <label for="what-i-learned">What I Learned</label>
-                        <textarea id="what-i-learned" rows="5" name="whatILearned"></textarea>
-                        <label for="resources-to-remember">Resources to Remember</label>
-                        <textarea id="resources-to-remember" rows="5" name="ResourcesToRemember"></textarea>
+                    <form method="POST" action="">
+                        {% from 'macros.html' import render_field %}
+                        {% if form.errors %}
+                        {{ form.errors }}
+                        {% endif %}
+                        {{ form.hidden_tag() }}
+                        {{ render_field(form.title) }}
+                        <label for="crreated_date">{{ form.created_date.label }}</label>
+                        <input type="date" id="created_date" name="created_date" value="{{form.created_date}}
+                        {{ render_field(form.time_spent) }}
+                        {{ render_field(form.learned) }}
+                        {{ render_field(form.resources) }}
                         <input type="submit" value="Publish Entry" class="button">
                         <a href="#" class="button button-secondary">Cancel</a>
                     </form>

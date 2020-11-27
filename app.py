@@ -1,11 +1,14 @@
 import models
-from flask import Flask, g, render_template, url_for
+import forms
+from flask import Flask, g, render_template, redirect, url_for
+from datetime import date, datetime
 
 DEBUG = True
 PORT = 8000
 HOST = '0.0.0.0'
 
 app = Flask(__name__)
+app.secret_key = 'lakfbalgnef28r2u$$£^%"ffsseffe!£!!$"£fefeawu&&"'
 
 
 @app.before_request
@@ -22,9 +25,19 @@ def after_request(response):
     return response
 
 
-@app.route('/new')
+@app.route('/new', methods=('GET', 'POST'))
 def new():
-    return render_template('new.html')
+    form = forms.EntryForm()
+    if form.validate_on_submit():
+        models.Entry.create(
+            title=form.title.data.strip(),
+            created_date=form.created_date.data,
+            time_spent=form.time_spent.data.strip(),
+            learned=form.learned.data.strip(),
+            resources=form.resources.data.strip()
+        )
+        return redirect(url_for('index'))
+    return render_template('new.html', form=form)
 
 
 @app.route('/entries/<int:entry_id>')
@@ -46,7 +59,7 @@ if __name__ == "__main__":
     if models.Entry.select().count() == 0:
         try:
             models.Entry.create(
-                content = "This is my first journal entry.",
+                title = "This is my first journal entry.",
                 time_spent = "3 Days",
                 learned = "How to build a learning journal using Python and Flask",
                 resources = 
