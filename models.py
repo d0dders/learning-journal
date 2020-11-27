@@ -1,5 +1,8 @@
 import datetime
-from peewee import *
+from peewee import (
+    SqliteDatabase, DateTimeField, CharField, TextField,
+    ForeignKeyField, Model
+    )
 
 
 DATABASE = SqliteDatabase('journal.db')
@@ -23,7 +26,7 @@ class Tag(Model):
     class Meta:
         database = DATABASE
         indexes = (
-            (('entry', 'tag_name'), True), 
+            (('entry', 'tag_name'), True),
         )
 
 
