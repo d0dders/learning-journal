@@ -1,7 +1,7 @@
 import models
 import forms
 from flask import Flask, g, render_template, redirect, url_for
-from datetime import date, datetime
+
 
 DEBUG = True
 PORT = 8000
@@ -66,9 +66,9 @@ def detail(entry_id):
 @app.route('/')
 @app.route('/entries')
 def index():
-    entries = models.Entry.select().limit(100).order_by(models.Entry.created_date.desc())
-    return  render_template('index.html', entries=entries)
-
+    entries = models.Entry.select().limit(100).order_by(
+        models.Entry.created_date.desc())
+    return render_template('index.html', entries=entries)
 
 
 if __name__ == "__main__":
@@ -76,13 +76,10 @@ if __name__ == "__main__":
     if models.Entry.select().count() == 0:
         try:
             models.Entry.create(
-                title = "This is my first journal entry.",
-                time_spent = "3 Days",
-                learned = "How to build a learning journal using Python and Flask",
-                resources = 
-                    """Team Treehouse
-https://pythonbasics.org/flask-tutorial-templates/
-http://docs.peewee-orm.com/projects/flask-peewee/en/latest/getting-started.html?highlight=response"""
+                title="This is my first journal entry.",
+                time_spent="3 Days",
+                learned="How to build a learning journal using Python",
+                resources="Team Treehouse"
                 )
         except ValueError:
             pass
