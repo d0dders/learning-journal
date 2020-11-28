@@ -30,11 +30,11 @@ class EntryForm(Form):
     )
     resources = TextAreaField(
         'Resources to Remember',
-        description = "add each resource on a new line"
+        description="add each resource on a new line"
     )
     tags = StringField(
         "Tags",
-        description = "add '#' in front of each tag"
+        description="add '#' in front of each tag"
     )
 
 
