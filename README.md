@@ -2,6 +2,7 @@
  
 TODO:
 
-Tags
+Time Spent should be an integer
 Login
-Change resources to not required field
+Resource that are URL's are an anchor tag
+In 'What I learned' seperate long text into seperate p tags

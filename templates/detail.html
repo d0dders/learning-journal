@@ -32,14 +32,12 @@
                         </div>
                         <div class="entry">
                             <h3>What I Learned:</h3>
-                            <!-- TODO: Seperate long text into seperate p tags -->
                             <p>{{ entry.learned }}</p>
                         </div>
                         <div class="entry">
                             <h3>Resources to Remember:</h3>
                             <ul>
                                 {% for resource in entry.resources.split('\n') %}
-                                <!-- TODO: See if we can hyperlink when resouce is a url -->
                                 <li>{{ resource }}</li>
                                 {% endfor%}
                             </ul>
