@@ -37,10 +37,13 @@ def new():
             resources=form.resources.data.strip()
         ).get_id()
         for tag in form.tags.data.strip().split('#')[1:]:
-            models.Tag.create(
-                entry=entry_id,
-                tag_name=tag.strip()
-            )
+            try:
+                models.Tag.create(
+                    entry=entry_id,
+                    tag_name=tag.strip()
+                )
+            except models.IntegrityError:
+                pass
         return redirect(url_for('index'))
     return render_template('new.html', form=form)
 
@@ -69,10 +72,13 @@ def edit(entry_id):
         ).where(models.Entry.id == entry_id).execute()
         models.Tag.delete().where(models.Tag.entry == entry_id).execute()
         for tag in form.tags.data.strip().split('#')[1:]:
-            models.Tag.create(
-                entry=entry_id,
-                tag_name=tag.strip()
-            )
+            try:
+                models.Tag.create(
+                    entry=entry_id,
+                    tag_name=tag.strip()
+                )
+            except models.IntegrityError:
+                pass
         return redirect(url_for('index'))
     try:
         entry = models.Entry.get_by_id(entry_id)
