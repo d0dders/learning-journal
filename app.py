@@ -105,9 +105,23 @@ def detail(entry_id):
 
 @app.route('/')
 @app.route('/entries')
-def index():
-    entries = models.Entry.select().limit(100).order_by(
-        models.Entry.created_date.desc())
+@app.route('/<tag_name>')
+def index(tag_name=None):
+    if tag_name:
+        matching_tags = models.Tag.select().where(
+            models.Tag.tag_name ** tag_name)
+        if len(matching_tags) == 0:
+            abort(404)
+        matching_entry_ids = [tag.entry_id for tag in matching_tags]
+        try:
+            entries = models.Entry.select().where(
+                models.Entry.id << matching_entry_ids).limit(100).order_by(
+                models.Entry.created_date.desc())
+        except models.DoesNotExist:
+            abort(404)
+    else:
+        entries = models.Entry.select().limit(100).order_by(
+            models.Entry.created_date.desc())
     return render_template('index.html', entries=entries)
 
 

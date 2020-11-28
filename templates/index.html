@@ -29,7 +29,7 @@
                         <time datetime="{{ entry.created_date.strftime('%Y-%m-%d') }}">{{ entry.created_date.strftime('%B %d, %Y') }}</time>
                         <ul class='tag-list'>
                             {% for tag in entry.tags %}
-                            <li>#{{ tag.tag_name}}</li>
+                            <li><a href="{{ url_for('index', tag_name=tag.tag_name) }}">#{{ tag.tag_name}}</a></li>
                             {% endfor %}
                         </ul>
                     </article>

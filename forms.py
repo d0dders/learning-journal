@@ -29,8 +29,7 @@ class EntryForm(Form):
         ]
     )
     resources = TextAreaField(
-        'Resources to Remember',
-        validators=[DataRequired()]
+        'Resources to Remember'
     )
     tags = StringField(
         "Tags (add '#' in front of each tag)"
