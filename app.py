@@ -40,6 +40,12 @@ def new():
     return render_template('new.html', form=form)
 
 
+@app.route('/entries/<int:entry_id>/delete')
+def delete(entry_id):
+    models.Entry.get_by_id(entry_id).delete_instance()
+    return redirect(url_for('index'))
+
+
 @app.route('/entries/<int:entry_id>/edit', methods=('GET', 'POST'))
 def edit(entry_id):
     form = forms.EntryForm()
