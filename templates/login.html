@@ -27,18 +27,19 @@
         </header>
         <section>
             <div class="container">
-                <div class="entry-list">
-                    {% for entry in entries %}
-                    <article>
-                        <h2><a href="{{ url_for('detail', entry_id=entry.id) }}">{{entry.title}}</a></h2>
-                        <time datetime="{{ entry.created_date.strftime('%Y-%m-%d') }}">{{ entry.created_date.strftime('%B %d, %Y') }}</time>
-                        <ul class='tag-list'>
-                            {% for tag in entry.tags %}
-                            <li><a href="{{ url_for('index', tag_name=tag.tag_name) }}">#{{ tag.tag_name}}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </article>
-                    {% endfor %}
+                <div class="new-entry">
+                    <h2>Login</h2>
+                    <form method="POST" action="">
+                        {% from 'macros.html' import render_field %}
+                        {% if form.errors %}
+                        {{ form.errors }}
+                        {% endif %}
+                        {{ form.hidden_tag() }}
+                        {{ render_field(form.username) }}
+                        {{ render_field(form.password) }}
+                        <input type="submit" value="Login" class="button">
+                        <a href="#" class="button button-secondary">Cancel</a>
+                    </form>
                 </div>
             </div>
         </section>

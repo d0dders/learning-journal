@@ -1,6 +1,9 @@
 import models
 import forms
 from flask import Flask, g, render_template, redirect, url_for, abort
+from flask_bcrypt import check_password_hash
+from flask_login import (LoginManager, login_user, logout_user,
+                         login_required, current_user)
 
 
 DEBUG = True
@@ -10,12 +13,25 @@ HOST = '0.0.0.0'
 app = Flask(__name__)
 app.secret_key = 'lakfbalgnef28r2u$$£^%"ffsseffe!£!!$"£fefeawu&&"'
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+
+@login_manager.user_loader
+def load_user(userid):
+    try:
+        return models.User.get(models.User.id == userid)
+    except models.DoesNotExist:
+        return None
+
 
 @app.before_request
 def before_request():
     """Connect to the db before each request"""
     g.db = models.DATABASE
     g.db.connect()
+    g.user = current_user
 
 
 @app.after_request
@@ -25,7 +41,32 @@ def after_request(response):
     return response
 
 
+@app.route('/login', methods=('GET', 'POST'))
+def login():
+    form = forms.LoginForm()
+    if form.validate_on_submit():
+        try:
+            user = models.User.get(models.User.username == form.username.data)
+        except models.DoesNotExist:
+            pass
+        else:
+            if check_password_hash(user.password, form.password.data):
+                login_user(user)
+                return redirect(url_for('index'))
+            else:
+                pass
+    return render_template('login.html', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
 @app.route('/new', methods=('GET', 'POST'))
+@login_required
 def new():
     form = forms.EntryForm()
     if form.validate_on_submit():
@@ -49,6 +90,7 @@ def new():
 
 
 @app.route('/entries/<int:entry_id>/delete')
+@login_required
 def delete(entry_id):
     try:
         models.Entry.get_by_id(entry_id).delete_instance()
@@ -60,6 +102,7 @@ def delete(entry_id):
 
 
 @app.route('/entries/<int:entry_id>/edit', methods=('GET', 'POST'))
+@login_required
 def edit(entry_id):
     form = forms.EntryForm()
     if form.validate_on_submit():
@@ -142,19 +185,12 @@ if __name__ == "__main__":
                 )
         except ValueError:
             pass
-        try:
-            models.Tag.create(
-                entry=1,
-                tag_name="Python"
+    try:
+        models.User.create_user(
+            username='admin',
+            password='password',
+            admin=True
             )
-            models.Tag.create(
-                entry=1,
-                tag_name="Flask"
-            )
-            models.Tag.create(
-                entry=1,
-                tag_name="Learning"
-            )
-        except models.IntegrityError:
-            pass
+    except ValueError:
+        pass
     app.run(debug=DEBUG, host=HOST, port=PORT)

@@ -9,12 +9,18 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet" href="static/css/normalize.css">
         <link rel="stylesheet" href="static/css/site.css">
+        <link rel="stylesheet" href="static/css/tags.css">
     </head>
     <body>
         <header>
             <div class="container">
                 <div class="site-header">
                     <a class="logo" href="{{ url_for('index') }}"><i class="material-icons">library_books</i></a>
+                    {% if current_user.is_authenticated %}
+                    <a class="button icon-right" href="{{ url_for('logout') }}"><span>Logout</span> <i class="material-icons">account_circle</i></a>
+                    {% else %}
+                    <a class="button icon-right" href="{{ url_for('login') }}"><span>Login</span> <i class="material-icons">account_circle</i></a>
+                    {% endif %}
                     <a class="button icon-right" href="{{ url_for('new') }}"><span>New Entry</span> <i class="material-icons">add</i></a>
                 </div>
             </div>
