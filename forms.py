@@ -32,7 +32,8 @@ class EntryForm(Form):
         'Resources to Remember'
     )
     tags = StringField(
-        "Tags (add '#' in front of each tag)"
+        "Tags",
+        description = "(add '#' in front of each tag)"
     )
 
 
