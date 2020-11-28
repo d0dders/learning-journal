@@ -2,6 +2,7 @@ from flask_wtf import Form
 from wtforms import StringField, DateField, TextAreaField
 from wtforms.validators import DataRequired
 
+
 class EntryForm(Form):
     title = StringField(
         'Title',
@@ -30,4 +31,7 @@ class EntryForm(Form):
     resources = TextAreaField(
         'Resources to Remember',
         validators=[DataRequired()]
+    )
+    tags = StringField(
+        "Tags (add '#' in front of each tag)"
     )

@@ -9,6 +9,7 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet" href="static/css/normalize.css">
         <link rel="stylesheet" href="static/css/site.css">
+        <link rel="stylesheet" href="static/css/tags.css">
     </head>
     <body>
         <header>
@@ -26,6 +27,11 @@
                     <article>
                         <h2><a href="{{ url_for('detail', entry_id=entry.id) }}">{{entry.title}}</a></h2>
                         <time datetime="{{ entry.created_date.strftime('%Y-%m-%d') }}">{{ entry.created_date.strftime('%B %d, %Y') }}</time>
+                        <ul class='tag-list'>
+                            {% for tag in entry.tags %}
+                            <li>#{{ tag.tag_name}}</li>
+                            {% endfor %}
+                        </ul>
                     </article>
                     {% endfor %}
                 </div>

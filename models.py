@@ -1,8 +1,5 @@
 import datetime
-from peewee import (
-    SqliteDatabase, DateTimeField, CharField, TextField,
-    ForeignKeyField, Model, DoesNotExist
-    )
+from peewee import *
 
 
 DATABASE = SqliteDatabase('journal.db')
@@ -21,7 +18,7 @@ class Entry(Model):
 
 class Tag(Model):
     entry = ForeignKeyField(Entry, backref="tags")
-    tag_name = CharField(max_length=50)
+    tag_name = CharField()
 
     class Meta:
         database = DATABASE

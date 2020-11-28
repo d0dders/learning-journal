@@ -9,6 +9,7 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet" href="../static/css/normalize.css">
         <link rel="stylesheet" href="../static/css/site.css">
+        <link rel="stylesheet" href="../static/css/tags.css">
     </head>
     <body>
         <header>
@@ -41,6 +42,14 @@
                                 <!-- TODO: See if we can hyperlink when resouce is a url -->
                                 <li>{{ resource }}</li>
                                 {% endfor%}
+                            </ul>
+                        </div>
+                        <div class="entry">
+                            <h3>Tags:</h3>
+                            <ul class='tag-list'>
+                                {% for tag in entry.tags %}
+                                <li>#{{ tag.tag_name}}</li>
+                                {% endfor %}
                             </ul>
                         </div>
                     </article>

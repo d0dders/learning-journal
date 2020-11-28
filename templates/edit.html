@@ -35,6 +35,7 @@
                         {{ render_field(form.time_spent) }}
                         {{ render_field(form.learned) }}
                         {{ render_field(form.resources) }}
+                        {{ render_field(form.tags) }}
                         <input type="submit" value="Publish Entry" class="button">
                         <a href="{{ url_for('detail', entry_id=entry.id) }}" class="button button-secondary">Cancel</a>
                     </form>
