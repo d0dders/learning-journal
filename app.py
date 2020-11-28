@@ -1,6 +1,6 @@
 import models
 import forms
-from flask import Flask, g, render_template, redirect, url_for
+from flask import Flask, g, render_template, redirect, url_for, abort
 
 
 DEBUG = True
@@ -42,8 +42,12 @@ def new():
 
 @app.route('/entries/<int:entry_id>/delete')
 def delete(entry_id):
-    models.Entry.get_by_id(entry_id).delete_instance()
-    return redirect(url_for('index'))
+    try:
+        models.Entry.get_by_id(entry_id).delete_instance()
+    except models.DoesNotExist:
+        abort(404)
+    else:
+        return redirect(url_for('index'))
 
 
 @app.route('/entries/<int:entry_id>/edit', methods=('GET', 'POST'))
@@ -58,15 +62,23 @@ def edit(entry_id):
             resources=form.resources.data.strip()
         ).where(models.Entry.id == entry_id).execute()
         return redirect(url_for('index'))
-    entry = models.Entry.get_by_id(entry_id)
-    form = forms.EntryForm(obj=entry)
-    return render_template('edit.html', form=form, entry=entry)
+    try:
+        entry = models.Entry.get_by_id(entry_id)
+        form = forms.EntryForm(obj=entry)
+    except models.DoesNotExist:
+        abort(404)
+    else:
+        return render_template('edit.html', form=form, entry=entry)
 
 
 @app.route('/entries/<int:entry_id>')
 def detail(entry_id):
-    entry = models.Entry.get_by_id(entry_id)
-    return render_template('detail.html', entry=entry)
+    try:
+        entry = models.Entry.get_by_id(entry_id)
+    except models.DoesNotExist:
+        abort(404)
+    else:
+        return render_template('detail.html', entry=entry)
 
 
 @app.route('/')
@@ -75,6 +87,11 @@ def index():
     entries = models.Entry.select().limit(100).order_by(
         models.Entry.created_date.desc())
     return render_template('index.html', entries=entries)
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return '404', 404
 
 
 if __name__ == "__main__":
