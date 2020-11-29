@@ -12,6 +12,14 @@
         <link rel="stylesheet" href="static/css/tags.css">
     </head>
     <body>
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="notification {{ category}}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
         <header>
             <div class="container">
                 <div class="site-header">
