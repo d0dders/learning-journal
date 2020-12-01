@@ -5,7 +5,7 @@
                 <div class="notification error">{{ error }}</div>
             {% endfor %}
         {% endif %}
-        {{ field.label }}
-        {{ field(placeholder=field.description, **kwargs) }}
+        {% if field.widget.input_type != 'hidden' %} {{ field.label }} {% endif %}
+        {{ field(placeholder=field.description) }}
     </div>
 {% endmacro %}

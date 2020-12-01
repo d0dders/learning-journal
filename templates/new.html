@@ -9,13 +9,11 @@
             {% if form.errors %}
             {{ form.errors }}
             {% endif %}
+
             {{ form.hidden_tag() }}
-            {{ render_field(form.title) }}
-            {{ render_field(form.created_date, type='date') }}
-            {{ render_field(form.time_spent) }}
-            {{ render_field(form.learned) }}
-            {{ render_field(form.resources) }}
-            {{ render_field(form.tags) }}
+            {% for field in form %}
+                {{ render_field(field) }}
+            {% endfor %}
             <input type="submit" value="Publish Entry" class="button">
             <a href="#" class="button button-secondary">Cancel</a>
         </form>

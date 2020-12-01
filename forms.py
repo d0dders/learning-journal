@@ -14,7 +14,8 @@ class EntryForm(Form):
         'Date',
         validators=[
             DataRequired()
-        ]
+        ],
+        render_kw={"type": "date"}
     )
     time_spent = StringField(
         'Time Spent',
