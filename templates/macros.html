@@ -6,6 +6,6 @@
             {% endfor %}
         {% endif %}
         {{ field.label }}
-        {{ field(placeholder=field.description) }}
+        {{ field(placeholder=field.description, **kwargs) }}
     </div>
 {% endmacro %}

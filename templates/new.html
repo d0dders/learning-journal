@@ -11,8 +11,7 @@
             {% endif %}
             {{ form.hidden_tag() }}
             {{ render_field(form.title) }}
-            {{ form.created_date.label }}
-            {{ form.created_date(type='date') }}
+            {{ render_field(form.created_date, type='date') }}
             {{ render_field(form.time_spent) }}
             {{ render_field(form.learned) }}
             {{ render_field(form.resources) }}
