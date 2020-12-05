@@ -75,7 +75,8 @@ def new():
             created_date=form.created_date.data,
             time_spent=form.time_spent.data.strip(),
             learned=form.learned.data.strip(),
-            resources=form.resources.data.strip()
+            resources=form.resources.data.strip(),
+            user=g.user._get_current_object()
         ).get_id()
         for tag in form.tags.data.strip().split('#')[1:]:
             try:
@@ -93,10 +94,17 @@ def new():
 @login_required
 def delete(entry_id):
     try:
-        models.Entry.get_by_id(entry_id).delete_instance()
-        models.Tag.delete().where(models.Tag.entry == entry_id).execute()
+        entry = models.Entry.get_by_id(entry_id)
+        if entry.user == g.user._get_current_object():
+            entry.delete_instance()
+            models.Tag.delete().where(models.Tag.entry == entry_id).execute()
+        else:
+            raise PermissionError("You cannot delete other users posts")
     except models.DoesNotExist:
         abort(404)
+    except PermissionError:
+        flash("You tried to delete another users entry", "error")
+        return redirect(url_for('index'))
     else:
         return redirect(url_for('index'))
 
@@ -125,6 +133,8 @@ def edit(entry_id):
         return redirect(url_for('index'))
     try:
         entry = models.Entry.get_by_id(entry_id)
+        if entry.user != g.user._get_current_object():
+            raise PermissionError
         tag_string = ''
         for tag in entry.tags:
             tag_string += '#'+tag.tag_name+' '
@@ -132,6 +142,9 @@ def edit(entry_id):
         form = forms.EntryForm(obj=entry)
     except models.DoesNotExist:
         abort(404)
+    except PermissionError:
+        flash("You cannot edit another users entry", "error")
+        return redirect(url_for('index'))
     else:
         return render_template('edit.html', form=form, entry=entry)
 
@@ -196,7 +209,7 @@ if __name__ == "__main__":
             pass
     try:
         models.User.create_user(
-            username='admin',
+            username='emma',
             password='password',
             admin=True
             )
