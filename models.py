@@ -7,28 +7,6 @@ from peewee import *
 DATABASE = SqliteDatabase('journal.db')
 
 
-class Entry(Model):
-    created_date = DateTimeField(default=datetime.datetime.now)
-    title = CharField()
-    time_spent = CharField()
-    learned = TextField()
-    resources = TextField()
-
-    class Meta:
-        database = DATABASE
-
-
-class Tag(Model):
-    entry = ForeignKeyField(Entry, backref="tags")
-    tag_name = CharField()
-
-    class Meta:
-        database = DATABASE
-        indexes = (
-            (('entry', 'tag_name'), True),
-        )
-
-
 class User(UserMixin, Model):
     username = CharField(unique=True)
     password = CharField(max_length=100)
@@ -48,6 +26,34 @@ class User(UserMixin, Model):
                 )
         except IntegrityError:
             raise ValueError("User already exists")
+
+
+class Entry(Model):
+    created_date = DateTimeField(default=datetime.datetime.now)
+    title = CharField()
+    time_spent = CharField()
+    learned = TextField()
+    resources = TextField()
+    user = ForeignKeyField(User, backref='entries')
+
+    class Meta:
+        database = DATABASE
+
+    def get_author_name(self):
+        return User.get_by_id(self.user).username
+
+
+class Tag(Model):
+    entry = ForeignKeyField(Entry, backref="tags")
+    tag_name = CharField()
+
+    class Meta:
+        database = DATABASE
+        indexes = (
+            (('entry', 'tag_name'), True),
+        )
+
+
 
 
 def initialize():

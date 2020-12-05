@@ -175,13 +175,22 @@ def not_found(error):
 
 if __name__ == "__main__":
     models.initialize()
+    try:
+        models.User.create_user(
+            username='admin',
+            password='password',
+            admin=True
+            )
+    except ValueError:
+        pass
     if models.Entry.select().count() == 0:
         try:
             models.Entry.create(
                 title="This is my first journal entry.",
                 time_spent="3 Days",
                 learned="How to build a learning journal using Python",
-                resources="Team Treehouse"
+                resources="Team Treehouse",
+                user=1
                 )
         except ValueError:
             pass
