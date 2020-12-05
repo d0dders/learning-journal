@@ -41,6 +41,20 @@ def after_request(response):
     return response
 
 
+@app.route('/register', methods=('GET', 'POST'))
+def register():
+    form = forms.RegisterForm()
+    if form.validate_on_submit():
+        flash("Yay, you registered!", "success")
+        models.User.create_user(
+            username=form.username.data,
+            email=form.email.data,
+            password=form.password.data 
+        )
+        return redirect(url_for('index'))
+    return render_template('register.html', form=form)
+
+
 @app.route('/login', methods=('GET', 'POST'))
 def login():
     form = forms.LoginForm()
@@ -75,7 +89,8 @@ def new():
             created_date=form.created_date.data,
             time_spent=form.time_spent.data.strip(),
             learned=form.learned.data.strip(),
-            resources=form.resources.data.strip()
+            resources=form.resources.data.strip(),
+            user=g.user._get_current_object()
         ).get_id()
         for tag in form.tags.data.strip().split('#')[1:]:
             try:
@@ -93,10 +108,17 @@ def new():
 @login_required
 def delete(entry_id):
     try:
-        models.Entry.get_by_id(entry_id).delete_instance()
-        models.Tag.delete().where(models.Tag.entry == entry_id).execute()
+        entry = models.Entry.get_by_id(entry_id)
+        if entry.user == g.user._get_current_object():
+            entry.delete_instance()
+            models.Tag.delete().where(models.Tag.entry == entry_id).execute()
+        else:
+            raise PermissionError("You cannot delete other users posts")
     except models.DoesNotExist:
         abort(404)
+    except PermissionError:
+        flash("You tried to delete another users entry", "error")
+        return redirect(url_for('index'))
     else:
         return redirect(url_for('index'))
 
@@ -125,6 +147,8 @@ def edit(entry_id):
         return redirect(url_for('index'))
     try:
         entry = models.Entry.get_by_id(entry_id)
+        if entry.user != g.user._get_current_object():
+            raise PermissionError
         tag_string = ''
         for tag in entry.tags:
             tag_string += '#'+tag.tag_name+' '
@@ -132,6 +156,9 @@ def edit(entry_id):
         form = forms.EntryForm(obj=entry)
     except models.DoesNotExist:
         abort(404)
+    except PermissionError:
+        flash("You cannot edit another users entry", "error")
+        return redirect(url_for('index'))
     else:
         return render_template('edit.html', form=form, entry=entry)
 
@@ -175,22 +202,24 @@ def not_found(error):
 
 if __name__ == "__main__":
     models.initialize()
+    try:
+        models.User.create_user(
+            username='admin',
+            email='admin@email.com',
+            password='password',
+            admin=True
+            )
+    except ValueError:
+        pass
     if models.Entry.select().count() == 0:
         try:
             models.Entry.create(
                 title="This is my first journal entry.",
                 time_spent="3 Days",
                 learned="How to build a learning journal using Python",
-                resources="Team Treehouse"
+                resources="Team Treehouse",
+                user=1
                 )
         except ValueError:
             pass
-    try:
-        models.User.create_user(
-            username='admin',
-            password='password',
-            admin=True
-            )
-    except ValueError:
-        pass
     app.run(debug=DEBUG, host=HOST, port=PORT)
