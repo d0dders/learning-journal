@@ -9,6 +9,7 @@ DATABASE = SqliteDatabase('journal.db')
 
 class User(UserMixin, Model):
     username = CharField(unique=True)
+    email = CharField(unique=True)
     password = CharField(max_length=100)
     is_admin = BooleanField(default=False)
 
@@ -16,11 +17,12 @@ class User(UserMixin, Model):
         database = DATABASE
 
     @classmethod
-    def create_user(cls, username, password, admin=True):
+    def create_user(cls, username, email, password, admin=True):
         try:
             with DATABASE.transaction():
                 cls.create(
                     username=username,
+                    email=email,
                     password=generate_password_hash(password),
                     is_admin=admin
                 )

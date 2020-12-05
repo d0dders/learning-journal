@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="new-entry">
+        <h2>Register</h2>
+        <form method="POST" action="">
+            {% from 'macros.html' import render_field %}
+            {% if form.errors %}
+            {{ form.errors }}
+            {% endif %}
+            {{ form.hidden_tag() }}
+            {% for field in form %}
+                {{ render_field(field) }}
+            {% endfor %}
+            <input type="submit" value="Register" class="button">
+        </form>
+    </div>
+</div>
+{% endblock %}

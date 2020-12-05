@@ -41,6 +41,20 @@ def after_request(response):
     return response
 
 
+@app.route('/register', methods=('GET', 'POST'))
+def register():
+    form = forms.RegisterForm()
+    if form.validate_on_submit():
+        flash("Yay, you registered!", "success")
+        models.User.create_user(
+            username=form.username.data,
+            email=form.email.data,
+            password=form.password.data 
+        )
+        return redirect(url_for('index'))
+    return render_template('register.html', form=form)
+
+
 @app.route('/login', methods=('GET', 'POST'))
 def login():
     form = forms.LoginForm()
@@ -191,6 +205,7 @@ if __name__ == "__main__":
     try:
         models.User.create_user(
             username='admin',
+            email='admin@email.com',
             password='password',
             admin=True
             )
@@ -207,12 +222,4 @@ if __name__ == "__main__":
                 )
         except ValueError:
             pass
-    try:
-        models.User.create_user(
-            username='emma',
-            password='password',
-            admin=True
-            )
-    except ValueError:
-        pass
     app.run(debug=DEBUG, host=HOST, port=PORT)
