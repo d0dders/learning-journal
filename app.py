@@ -195,10 +195,11 @@ def index(tag_name=None, username=None):
         except models.DoesNotExist:
             abort(404)
     elif username:
-        user_id = models.User.select().where(models.User.username ** username).get().get_id()
+        user_id = models.User.select().where(
+            models.User.username ** username).get().get_id()
         entries = models.Entry.select().where(
-                models.Entry.user == user_id).limit(100).order_by(
-                models.Entry.created_date.desc())
+            models.Entry.user == user_id).limit(100).order_by(
+            models.Entry.created_date.desc())
     else:
         entries = models.Entry.select().limit(100).order_by(
             models.Entry.created_date.desc())
