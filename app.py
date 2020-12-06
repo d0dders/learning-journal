@@ -49,7 +49,7 @@ def register():
         models.User.create_user(
             username=form.username.data,
             email=form.email.data,
-            password=form.password.data 
+            password=form.password.data
         )
         return redirect(url_for('index'))
     if current_user.is_anonymous:
@@ -57,7 +57,6 @@ def register():
     else:
         flash("Logged in users cannot register again", "error")
         return redirect(url_for('index'))
-
 
 
 @app.route('/login', methods=('GET', 'POST'))
@@ -181,7 +180,8 @@ def detail(entry_id):
 @app.route('/')
 @app.route('/entries')
 @app.route('/<tag_name>')
-def index(tag_name=None):
+@app.route('/user/<username>')
+def index(tag_name=None, username=None):
     if tag_name:
         matching_tags = models.Tag.select().where(
             models.Tag.tag_name ** tag_name)
@@ -194,6 +194,11 @@ def index(tag_name=None):
                 models.Entry.created_date.desc())
         except models.DoesNotExist:
             abort(404)
+    elif username:
+        user_id = models.User.select().where(models.User.username ** username).get().get_id()
+        entries = models.Entry.select().where(
+                models.Entry.user == user_id).limit(100).order_by(
+                models.Entry.created_date.desc())
     else:
         entries = models.Entry.select().limit(100).order_by(
             models.Entry.created_date.desc())
