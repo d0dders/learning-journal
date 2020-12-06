@@ -109,7 +109,7 @@ def new():
 def delete(entry_id):
     try:
         entry = models.Entry.get_by_id(entry_id)
-        if entry.user == g.user._get_current_object():
+        if entry.user == current_user:
             entry.delete_instance()
             models.Tag.delete().where(models.Tag.entry == entry_id).execute()
         else:
@@ -147,7 +147,7 @@ def edit(entry_id):
         return redirect(url_for('index'))
     try:
         entry = models.Entry.get_by_id(entry_id)
-        if entry.user != g.user._get_current_object():
+        if entry.user != current_user:
             raise PermissionError
         tag_string = ''
         for tag in entry.tags:
