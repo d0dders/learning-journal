@@ -52,7 +52,12 @@ def register():
             password=form.password.data 
         )
         return redirect(url_for('index'))
-    return render_template('register.html', form=form)
+    if current_user.is_anonymous:
+        return render_template('register.html', form=form)
+    else:
+        flash("Logged in users cannot register again", "error")
+        return redirect(url_for('index'))
+
 
 
 @app.route('/login', methods=('GET', 'POST'))
